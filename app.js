@@ -1,9 +1,9 @@
 var collidePlayerSound = new Howl({
-  src: ["sounds/metal-hit.wav"]
+  src: ["./sounds/metal-hit.wav"]
 });
 
 var playerPointSound = new Howl({
-  src: ["sounds/point-sound.wav"]
+  src: ["./sounds/point-sound.wav"]
 });
 
 const scorePlayer1 = document.getElementById("player-1-pont");
