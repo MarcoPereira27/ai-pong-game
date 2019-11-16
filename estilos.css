@@ -1,0 +1,80 @@
+@font-face {
+  font-family: Forwa;
+  src: url("FFFFORWA.TTF");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#stat-player-1 {
+  width: 15vw;
+  height: 90.5vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-top: 2.5vh;
+  margin-left: 0.8vw;
+  display: grid;
+  grid-template-rows: 10% 30% 50% 10%;
+  grid-gap: 1.5vh;
+}
+
+#stat-player-2 {
+  width: 15vw;
+  height: 90.5vh;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 2.5vh;
+  margin-right: 0.8vw;
+  display: grid;
+  grid-template-rows: 10% 30% 50% 10%;
+  grid-gap: 1.5vh;
+}
+
+#player-1-name,
+#player-2-name {
+  font-family: "Forwa", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 3px #fff solid;
+}
+
+#player-1-pont,
+#player-2-pont {
+  font-family: "Forwa", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 3px #fff solid;
+  font-size: 5rem;
+}
+
+#player-1-pose,
+#player-2-pose {
+  font-family: "Forwa", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 3px #fff solid;
+}
+
+#player-1-powerups,
+#player-2-powerups {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  color: #fff;
+  grid-gap: 1vw;
+}
+
+#player-1-powerups div,
+#player-2-powerups div {
+  border: 3px #fff solid;
+}
