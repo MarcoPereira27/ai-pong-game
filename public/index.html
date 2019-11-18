@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+    <link rel="stylesheet" href="estilos.css" />
+    <title>Pose-Pong</title>
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        background: #000;
+        margin: 0;
+        height: 100vh;
+      }
+
+      canvas {
+        border: solid 3px #fff;
+        image-rendering: pixelated;
+        width: auto;
+        height: 95vh;
+        margin: auto;
+        max-width: 70vw;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="pong" width="600" height="400"></canvas>
+
+    <div id="stat-player-1">
+      <div id="player-1-name">Marco Pereira</div>
+
+      <div id="player-1-pont">1</div>
+
+      <div id="player-1-pose"></div>
+
+      <div id="player-1-powerups">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div id="stat-player-2">
+      <div id="player-2-name">Ema Bonito</div>
+
+      <div id="player-2-pont">1</div>
+
+      <div id="player-2-pose"></div>
+
+      <div id="player-2-powerups">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
