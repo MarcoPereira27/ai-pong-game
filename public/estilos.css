@@ -78,3 +78,26 @@
 #player-2-powerups div {
   border: 3px #fff solid;
 }
+
+/* PowerUp */
+.pu-expand {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.pu-expand img {
+  width: auto !important;
+  height: 100% !important;
+  position: absolute;
+  margin: auto;
+  top: -9999px;
+  bottom: -9999px;
+  left: -9999px;
+  right: -9999px;
+}
+
+.cooldown {
+  background: #888;
+  opacity: 0.7;
+}

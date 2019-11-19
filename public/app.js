@@ -19,12 +19,24 @@ var playerPointSound = new Howl({
   src: ["./sounds/point-sound.wav"]
 });
 
+var playerGrowingSound = new Howl({
+  src: ["./sounds/player-growing.wav"]
+});
+
+var playerShrinkingSound = new Howl({
+  src: ["./sounds/player-shrinking.wav"]
+});
+
 // var playerPopSound = new Howl({
 //   scr: ["./sounds/player-pop.wav"]
 // });
 
 const scorePlayer1 = document.getElementById("player-1-pont");
 const scorePlayer2 = document.getElementById("player-2-pont");
+const expandDiv = document.getElementById("expand-player-1");
+var i = 0;
+var isExpanded = false;
+var canExpand = true;
 
 class Vec {
   constructor(x = 0, y = 0) {
@@ -124,10 +136,10 @@ class Pong {
   }
 
   collide(player, ball) {
-    if (player.left <= ball.right && player.right >= ball.left) {
+    if (player.left < ball.right && player.right > ball.left) {
       if (player.top + 5 <= ball.bottom && player.bottom - 5 >= ball.top) {
         const len = ball.vel.len;
-        ball.vel.x = -ball.vel.x;
+        ball.vel.x = -ball.vel.x + 5;
         collidePlayerSound.play();
 
         //Aumentar a velocidade da bola e alterar o ângulo a cada hit
@@ -182,6 +194,35 @@ class Pong {
     }
   }
 
+  expand() {
+    //Expandir jogador
+    playerGrowingSound.play();
+    canExpand = false;
+    for (let i = 1; i < 100; i++) {
+      setTimeout(function timer() {
+        pong.players[0].size.y += 1;
+      }, i * 5);
+    }
+
+    //Shrink jogador
+    setTimeout(() => {
+      for (let i = 100; i > 1; i--) {
+        setTimeout(function timer() {
+          pong.players[0].size.y -= 1;
+        }, i * 5);
+      }
+      isExpanded = false;
+      playerShrinkingSound.play();
+    }, 7000);
+
+    //Cooldown
+    setTimeout(() => {
+      canExpand = true;
+    }, 17000);
+
+    isExpanded = true;
+  }
+
   update(dt) {
     this.ball.pos.x += this.ball.vel.x * dt;
     this.ball.pos.y += this.ball.vel.y * dt;
@@ -211,11 +252,13 @@ class Pong {
     }
 
     //Movimento Player 2
-    if (top2Pressed == true) {
-      this.players[1].pos.y -= 3;
-    } else if (down2Pressed == true) {
-      this.players[1].pos.y += 3;
-    }
+    // if (top2Pressed == true) {
+    //   this.players[1].pos.y -= 3;
+    // } else if (down2Pressed == true) {
+    //   this.players[1].pos.y += 3;
+    // }
+
+    this.players[1].pos.y = this.ball.pos.y;
 
     this.players.forEach(player => this.collide(player, this.ball));
 
@@ -224,6 +267,13 @@ class Pong {
     //Update score
     scorePlayer1.textContent = this.players[1].score;
     scorePlayer2.textContent = this.players[0].score;
+
+    //Display Cooldowns
+    if (canExpand == false) {
+      expandDiv.classList.add("cooldown");
+    } else if (canExpand == true) {
+      expandDiv.classList.remove("cooldown");
+    }
 
     //Socket Data Emit
 
@@ -257,6 +307,11 @@ window.addEventListener("keydown", function(e) {
   } else if (e.keyCode == 40) {
     down2Pressed = true;
     top2Pressed = false;
+  } else if (e.key == "e") {
+    if (isExpanded == false && canExpand == true) {
+      pong.expand();
+    } else {
+    }
   }
 });
 
