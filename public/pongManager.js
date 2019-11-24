@@ -1,0 +1,3 @@
+class PongManager {
+  constructor(document) {}
+}
