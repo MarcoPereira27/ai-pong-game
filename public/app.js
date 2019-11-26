@@ -26,6 +26,15 @@ var playerSpeedingSound = new Howl({
   src: ["./sounds/slow-up.wav"]
 });
 
+var playerPoweredSound = new Howl({
+  src: ["./sounds/ispowered.wav"],
+  loop: true
+});
+
+var playerShotSound = new Howl({
+  src: ["./sounds/playershot.wav"]
+});
+
 // var playerPopSound = new Howl({
 //   scr: ["./sounds/player-pop.wav"]
 // });
@@ -36,6 +45,8 @@ const expandDiv1 = document.getElementById("expand-player-1");
 const expandDiv2 = document.getElementById("expand-player-2");
 const slowDiv1 = document.getElementById("slow-player-1");
 const slowDiv2 = document.getElementById("slow-player-2");
+const speedDiv1 = document.getElementById("speed-player-1");
+const speedDiv2 = document.getElementById("speed-player-2");
 var i = 0;
 //Expand
 var player1isExpanded = false;
@@ -47,6 +58,13 @@ var player2canExpand = true;
 var isSlowedDown = false;
 var player1CanSlow = true;
 var player2CanSlow = true;
+
+//Speed
+var ballIsSpeed = false;
+var player1CanSpeed = true;
+var player2CanSpeed = true;
+var player1isPowered = false;
+var player2isPowered = false;
 
 class Vec {
   constructor(x = 0, y = 0) {
@@ -149,25 +167,73 @@ class Pong {
     if (player.left < ball.right && player.right > ball.left) {
       if (player.top + 5 < ball.bottom && player.bottom - 5 > ball.top) {
         if (ball.pos.x > 300) {
-          const len = ball.vel.len;
-          ball.pos.x -= 2;
-          ball.vel.x = -ball.vel.x;
-          collidePlayerSound.play();
+          if (ballIsSpeed == true) {
+            ballIsSpeed = false;
+            player2CanSpeed = true;
+            const len = ball.vel.len;
+            ball.pos.x -= 3;
+            ball.vel.x = -ball.vel.x;
+            collidePlayerSound.play();
 
-          //Aumentar a velocidade da bola e alterar o ângulo a cada hit
-          ball.vel.y += 300 * (Math.random() - 0.5);
-          ball.vel.len = len * 1.05;
-          console.log("tá fixe a colisão");
+            ball.vel.y += 300 * (Math.random() - 0.5);
+            ball.vel.len = len / 3;
+          }
+          if (player2isPowered == true) {
+            playerShotSound.play();
+            playerPoweredSound.stop();
+            ballIsSpeed = true;
+            player2isPowered = false;
+            const len = ball.vel.len;
+            ball.pos.x -= 2;
+            ball.vel.x = -ball.vel.x;
+            collidePlayerSound.play();
+
+            ball.vel.y += 300 * (Math.random() - 0.5);
+            ball.vel.len = len * 3;
+          } else {
+            const len = ball.vel.len;
+            ball.pos.x -= 3;
+            ball.vel.x = -ball.vel.x;
+            collidePlayerSound.play();
+
+            //Aumentar a velocidade da bola e alterar o ângulo a cada hit
+            ball.vel.y += 300 * (Math.random() - 0.5);
+            ball.vel.len = len * 1.05;
+          }
         } else if (ball.pos.x < 300) {
-          const len = ball.vel.len;
-          ball.pos.x += 2;
-          ball.vel.x = -ball.vel.x;
-          collidePlayerSound.play();
+          if (ballIsSpeed == true) {
+            ballIsSpeed = false;
+            player1CanSpeed = true;
+            const len = ball.vel.len;
+            ball.pos.x += 3;
+            ball.vel.x = -ball.vel.x;
+            collidePlayerSound.play();
 
-          //Aumentar a velocidade da bola e alterar o ângulo a cada hit
-          ball.vel.y += 300 * (Math.random() - 0.5);
-          ball.vel.len = len * 1.05;
-          console.log("tá fixe a colisão");
+            ball.vel.y += 300 * (Math.random() - 0.5);
+            ball.vel.len = len / 3;
+          }
+          if (player1isPowered == true) {
+            playerShotSound.play();
+            playerPoweredSound.stop();
+            ballIsSpeed = true;
+            player1isPowered = false;
+            const len = ball.vel.len;
+            ball.pos.x += 2;
+            ball.vel.x = -ball.vel.x;
+            collidePlayerSound.play();
+
+            ball.vel.y += 300 * (Math.random() - 0.5);
+            ball.vel.len = len * 3;
+          } else {
+            const len = ball.vel.len;
+            ball.pos.x += 2;
+            ball.vel.x = -ball.vel.x;
+            collidePlayerSound.play();
+
+            //Aumentar a velocidade da bola e alterar o ângulo a cada hit
+            ball.vel.y += 300 * (Math.random() - 0.5);
+            ball.vel.len = len * 1.05;
+          }
         }
       } else if (
         // Colisão em cima
@@ -192,8 +258,23 @@ class Pong {
     this._context.fillStyle = "#000";
     this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
+    this._context.shadowBlur = 0;
+    this._context.shadowColor = "black";
+
     this.drawRect(this.ball);
     this.players.forEach(player => this.drawRect(player));
+
+    if (player1isPowered == true) {
+      this._context.shadowBlur = 17;
+      this._context.shadowColor = "yellow";
+      this.drawRect(this.players[0]);
+    }
+
+    if (player2isPowered == true) {
+      this._context.shadowBlur = 17;
+      this._context.shadowColor = "yellow";
+      this.drawRect(this.players[1]);
+    }
   }
 
   drawRect(rect) {
@@ -211,6 +292,9 @@ class Pong {
     player2CanSlow = true;
     player1canExpand = true;
     player2canExpand = true;
+    player2CanSpeed = true;
+    player1CanSpeed = true;
+    ballIsSpeed = false;
   }
 
   start() {
@@ -219,6 +303,30 @@ class Pong {
       this.ball.vel.y = 150 * (Math.random() * 2 - 1);
       this.ball.vel.len = 150;
     }
+  }
+
+  speedBallPlayer1() {
+    //Som de setup player
+    playerPoweredSound.play();
+    player1isPowered = true;
+    player1CanSpeed = false;
+    player2CanSpeed = false;
+
+    setTimeout(() => {
+      player1CanSpeed = true;
+    }, 17000);
+  }
+
+  speedBallPlayer2() {
+    //Som de setup player
+    playerPoweredSound.play();
+    player2isPowered = true;
+    player2CanSpeed = false;
+    player1CanSpeed = false;
+
+    setTimeout(() => {
+      player2CanSpeed = true;
+    }, 10000);
   }
 
   timeFreeze() {
@@ -333,13 +441,11 @@ class Pong {
     }
 
     // //Movimento Player 2
-    // if (top2Pressed == true) {
-    //   this.players[1].pos.y -= 3;
-    // } else if (down2Pressed == true) {
-    //   this.players[1].pos.y += 3;
-    // }
-
-    this.players[1].pos.y = this.ball.pos.y;
+    if (top2Pressed == true) {
+      this.players[1].pos.y -= 3;
+    } else if (down2Pressed == true) {
+      this.players[1].pos.y += 3;
+    }
 
     this.players.forEach(player => this.collide(player, this.ball));
 
@@ -372,6 +478,18 @@ class Pong {
       slowDiv2.classList.add("cooldown");
     } else if (player2CanSlow == true) {
       slowDiv2.classList.remove("cooldown");
+    }
+
+    //Speed Colldowns
+    if (player1CanSpeed == false) {
+      speedDiv1.classList.add("cooldown");
+    } else if (player1CanSpeed == true) {
+      speedDiv1.classList.remove("cooldown");
+    }
+    if (player2CanSpeed == false) {
+      speedDiv2.classList.add("cooldown");
+    } else if (player2CanSpeed == true) {
+      speedDiv2.classList.remove("cooldown");
     }
   }
 }
@@ -408,7 +526,7 @@ window.addEventListener("keydown", function(e) {
     } else {
     }
   } else if (e.key == "d") {
-    if (isSlowedDown == false) {
+    if (isSlowedDown == false && player1CanSlow == true) {
       pong.timeFreeze();
       player1CanSlow = false;
       setTimeout(() => {
@@ -416,13 +534,17 @@ window.addEventListener("keydown", function(e) {
       }, 17000);
     }
   } else if (e.key == "l") {
-    if (isSlowedDown == false) {
+    if (isSlowedDown == false && player2CanSlow == true) {
       pong.timeFreeze();
       player2CanSlow = false;
       setTimeout(() => {
         player2CanSlow = true;
       }, 17000);
     }
+  } else if (e.key == "a" && player1CanSpeed == true) {
+    pong.speedBallPlayer1();
+  } else if (e.key == "j" && player2CanSpeed == true) {
+    pong.speedBallPlayer2();
   }
 });
 
