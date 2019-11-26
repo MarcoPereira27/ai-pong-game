@@ -20,7 +20,7 @@
       canvas {
         border: solid 3px #fff;
         image-rendering: pixelated;
-        width: auto;
+        width: 67vw;
         height: 95vh;
         margin: auto;
         max-width: 70vw;
@@ -38,10 +38,12 @@
       <div id="player-1-pose"></div>
 
       <div id="player-1-powerups">
-        <div class="pu-expand" id="expand-player-1">
+        <div class="pu" id="expand-player-1">
           <img src="img/expand.png" alt="Expand" />
         </div>
-        <div></div>
+        <div class="pu" id="slow-player-1">
+          <img src="img/slow-down.png" alt="Slow Down" />
+        </div>
         <div></div>
       </div>
     </div>
@@ -54,14 +56,15 @@
       <div id="player-2-pose"></div>
 
       <div id="player-2-powerups">
-        <div class="pu-expand" id="expand-player-2">
+        <div class="pu" id="expand-player-2">
           <img src="img/expand.png" alt="Expand" />
         </div>
-        <div></div>
+        <div class="pu" id="slow-player-2">
+          <img src="img/slow-down.png" alt="Slow Down" />
+        </div>
         <div></div>
       </div>
     </div>
-    <script src="teachable.js"></script>
     <script src="connection_manager.js"></script>
     <script src="app.js"></script>
   </body>

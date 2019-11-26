@@ -80,13 +80,13 @@
 }
 
 /* PowerUp */
-.pu-expand {
+.pu {
   position: relative;
   overflow: hidden;
   padding: 1rem;
 }
 
-.pu-expand img {
+.pu img {
   width: auto !important;
   height: 100% !important;
   position: absolute;

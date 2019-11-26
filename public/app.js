@@ -18,6 +18,14 @@ var playerShrinkingSound = new Howl({
   src: ["./sounds/player-shrinking.wav"]
 });
 
+var playerSlowingSound = new Howl({
+  src: ["./sounds/slow-down.wav"]
+});
+
+var playerSpeedingSound = new Howl({
+  src: ["./sounds/slow-up.wav"]
+});
+
 // var playerPopSound = new Howl({
 //   scr: ["./sounds/player-pop.wav"]
 // });
@@ -26,6 +34,8 @@ const scorePlayer1 = document.getElementById("player-1-pont");
 const scorePlayer2 = document.getElementById("player-2-pont");
 const expandDiv1 = document.getElementById("expand-player-1");
 const expandDiv2 = document.getElementById("expand-player-2");
+const slowDiv1 = document.getElementById("slow-player-1");
+const slowDiv2 = document.getElementById("slow-player-2");
 var i = 0;
 //Expand
 var player1isExpanded = false;
@@ -33,12 +43,10 @@ var player1canExpand = true;
 var player2isExpanded = false;
 var player2canExpand = true;
 
-//Ballspeed
-var player1isPowered = false;
-var player1canPower = true;
-var player2isPowered = false;
-var player2canPower = true;
-var ballisPowered = false;
+//Slow Down
+var isSlowedDown = false;
+var player1CanSlow = true;
+var player2CanSlow = true;
 
 class Vec {
   constructor(x = 0, y = 0) {
@@ -141,13 +149,6 @@ class Pong {
     if (player.left < ball.right && player.right > ball.left) {
       if (player.top + 5 < ball.bottom && player.bottom - 5 > ball.top) {
         if (ball.pos.x > 300) {
-          if (ballisPowered == true) {
-            ball.pos.x -= 2;
-            ball.vel.x = -ball.vel.x / 2.5;
-            ball.vel.y += 300 * (Math.random() - 0.5);
-            collidePlayerSound.play();
-            ballisPowered = false;
-          }
           const len = ball.vel.len;
           ball.pos.x -= 2;
           ball.vel.x = -ball.vel.x;
@@ -158,24 +159,15 @@ class Pong {
           ball.vel.len = len * 1.05;
           console.log("tá fixe a colisão");
         } else if (ball.pos.x < 300) {
-          if (player1isPowered == true) {
-            player1canPower = false;
-            ballisPowered = true;
-            ball.pos.x += 2;
-            ball.vel.x = -ball.vel.x * 2.5;
-            collidePlayerSound.play();
-            ball.vel.y += 300 * (Math.random() - 0.5);
-            player1isPowered = false;
-          } else {
-            const len = ball.vel.len;
-            ball.pos.x += 2;
-            ball.vel.x = -ball.vel.x;
-            collidePlayerSound.play();
+          const len = ball.vel.len;
+          ball.pos.x += 2;
+          ball.vel.x = -ball.vel.x;
+          collidePlayerSound.play();
 
-            //Aumentar a velocidade da bola e alterar o ângulo a cada hit
-            ball.vel.y += 300 * (Math.random() - 0.5);
-            ball.vel.len = len * 1.05;
-          }
+          //Aumentar a velocidade da bola e alterar o ângulo a cada hit
+          ball.vel.y += 300 * (Math.random() - 0.5);
+          ball.vel.len = len * 1.05;
+          console.log("tá fixe a colisão");
         }
       } else if (
         // Colisão em cima
@@ -211,16 +203,14 @@ class Pong {
   }
 
   reset() {
-    player1isPowered = false;
-    player1canPower = true;
-    player2isPowered = false;
-    player2canPower = true;
-    ballisPowered = false;
-
     this.ball.pos.x = this._canvas.width / 2;
     this.ball.pos.y = this._canvas.height / 2;
     this.ball.vel.x = 0;
     this.ball.vel.y = 0;
+    player1CanSlow = true;
+    player2CanSlow = true;
+    player1canExpand = true;
+    player2canExpand = true;
   }
 
   start() {
@@ -228,6 +218,31 @@ class Pong {
       this.ball.vel.x = 150 * (Math.random() > 0.5 ? 1 : -1);
       this.ball.vel.y = 150 * (Math.random() * 2 - 1);
       this.ball.vel.len = 150;
+    }
+  }
+
+  timeFreeze() {
+    playerSlowingSound.play();
+    if (isSlowedDown == false) {
+      isSlowedDown = true;
+      for (let i = 1; i < 3; i++) {
+        setTimeout(function timer() {
+          pong.ball.vel.len = pong.ball.vel.len * 0.5;
+        }, i * 5);
+      }
+
+      setTimeout(() => {
+        playerSpeedingSound.play();
+      }, 1650);
+
+      setTimeout(() => {
+        for (let i = 1; i < 3; i++) {
+          setTimeout(function timer() {
+            pong.ball.vel.len = pong.ball.vel.len / 0.5;
+          }, i * 5);
+        }
+        isSlowedDown = false;
+      }, 5000);
     }
   }
 
@@ -317,12 +332,14 @@ class Pong {
       this.players[0].pos.y += 3;
     }
 
-    //Movimento Player 2
-    if (top2Pressed == true) {
-      this.players[1].pos.y -= 3;
-    } else if (down2Pressed == true) {
-      this.players[1].pos.y += 3;
-    }
+    // //Movimento Player 2
+    // if (top2Pressed == true) {
+    //   this.players[1].pos.y -= 3;
+    // } else if (down2Pressed == true) {
+    //   this.players[1].pos.y += 3;
+    // }
+
+    this.players[1].pos.y = this.ball.pos.y;
 
     this.players.forEach(player => this.collide(player, this.ball));
 
@@ -332,7 +349,7 @@ class Pong {
     scorePlayer1.textContent = this.players[1].score;
     scorePlayer2.textContent = this.players[0].score;
 
-    //Display Cooldowns
+    //Expand Cooldowns
     if (player1canExpand == false) {
       expandDiv1.classList.add("cooldown");
     } else if (player1canExpand == true) {
@@ -343,6 +360,18 @@ class Pong {
       expandDiv2.classList.add("cooldown");
     } else if (player2canExpand == true) {
       expandDiv2.classList.remove("cooldown");
+    }
+
+    //Slow Cooldowns
+    if (player1CanSlow == false) {
+      slowDiv1.classList.add("cooldown");
+    } else if (player1CanSlow == true) {
+      slowDiv1.classList.remove("cooldown");
+    }
+    if (player2CanSlow == false) {
+      slowDiv2.classList.add("cooldown");
+    } else if (player2CanSlow == true) {
+      slowDiv2.classList.remove("cooldown");
     }
   }
 }
@@ -379,7 +408,21 @@ window.addEventListener("keydown", function(e) {
     } else {
     }
   } else if (e.key == "d") {
-    player1isPowered = true;
+    if (isSlowedDown == false) {
+      pong.timeFreeze();
+      player1CanSlow = false;
+      setTimeout(() => {
+        player1CanSlow = true;
+      }, 17000);
+    }
+  } else if (e.key == "l") {
+    if (isSlowedDown == false) {
+      pong.timeFreeze();
+      player2CanSlow = false;
+      setTimeout(() => {
+        player2CanSlow = true;
+      }, 17000);
+    }
   }
 });
 
