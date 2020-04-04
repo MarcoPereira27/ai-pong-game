@@ -447,6 +447,15 @@ class Pong {
       this.players[1].pos.y += 3;
     }
 
+    //Power up AI
+    if (
+      (this.ball.pos.y >= this.players[1].pos.y + 50 ||
+        this.ball.pos.y <= this.players[1].pos.y - 50) &&
+      player2canExpand == true
+    ) {
+      this.player2expand();
+    }
+
     this.players.forEach((player) => this.collide(player, this.ball));
 
     this.draw();
