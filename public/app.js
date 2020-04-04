@@ -3,36 +3,36 @@ connectionManager.connect("ws://localhost:9000");
 
 //Sounds
 var collidePlayerSound = new Howl({
-  src: ["./sounds/metal-hit.wav"]
+  src: ["./sounds/metal-hit.wav"],
 });
 
 var playerPointSound = new Howl({
-  src: ["./sounds/point-sound.wav"]
+  src: ["./sounds/point-sound.wav"],
 });
 
 var playerGrowingSound = new Howl({
-  src: ["./sounds/player-growing.wav"]
+  src: ["./sounds/player-growing.wav"],
 });
 
 var playerShrinkingSound = new Howl({
-  src: ["./sounds/player-shrinking.wav"]
+  src: ["./sounds/player-shrinking.wav"],
 });
 
 var playerSlowingSound = new Howl({
-  src: ["./sounds/slow-down.wav"]
+  src: ["./sounds/slow-down.wav"],
 });
 
 var playerSpeedingSound = new Howl({
-  src: ["./sounds/slow-up.wav"]
+  src: ["./sounds/slow-up.wav"],
 });
 
 var playerPoweredSound = new Howl({
   src: ["./sounds/ispowered.wav"],
-  loop: true
+  loop: true,
 });
 
 var playerShotSound = new Howl({
-  src: ["./sounds/playershot.wav"]
+  src: ["./sounds/playershot.wav"],
 });
 
 // var playerPopSound = new Howl({
@@ -144,12 +144,12 @@ class Pong {
 
     this.players[0].pos.x = 40;
     this.players[1].pos.x = this._canvas.width - 40;
-    this.players.forEach(player => {
+    this.players.forEach((player) => {
       player.pos.y = this._canvas.height / 2;
     });
 
     let lastTime;
-    const callback = millis => {
+    const callback = (millis) => {
       if (lastTime) {
         this.update((millis - lastTime) / 1000);
       }
@@ -262,7 +262,7 @@ class Pong {
     this._context.shadowColor = "black";
 
     this.drawRect(this.ball);
-    this.players.forEach(player => this.drawRect(player));
+    this.players.forEach((player) => this.drawRect(player));
 
     if (player1isPowered == true) {
       this._context.shadowBlur = 17;
@@ -441,13 +441,13 @@ class Pong {
     }
 
     // //Movimento Player 2
-    if (top2Pressed == true) {
+    if (this.ball.pos.y <= this.players[1].pos.y) {
       this.players[1].pos.y -= 3;
-    } else if (down2Pressed == true) {
+    } else if (this.ball.pos.y >= this.players[1].pos.y) {
       this.players[1].pos.y += 3;
     }
 
-    this.players.forEach(player => this.collide(player, this.ball));
+    this.players.forEach((player) => this.collide(player, this.ball));
 
     this.draw();
 
@@ -502,7 +502,7 @@ var down1Pressed;
 var top2Pressed;
 var down2Pressed;
 
-window.addEventListener("keydown", function(e) {
+window.addEventListener("keydown", function (e) {
   if (e.key == "w") {
     top1Pressed = true;
     down1Pressed = false;
@@ -548,7 +548,7 @@ window.addEventListener("keydown", function(e) {
   }
 });
 
-window.addEventListener("keyup", function(e) {
+window.addEventListener("keyup", function (e) {
   if (e.key == "w") {
     top1Pressed = false;
   } else if (e.key == "s") {
